@@ -10,11 +10,113 @@
   <body>
     <div id="root"></div>
     <script type="text/babel">
+      const data = {
+        transactions: [
+          {
+            date: '2017/06/01',
+            name: 'Paycheck',
+            amount: 1000.00,
+            category: 'Income',
+            expense: false,
+          },
+          {
+            date: '2017/06/02',
+            name: 'Mortgage',
+            amount: 3000.00,
+            category: 'Housing',
+            expense: true,
+          },
+          {
+            date: '2017/06/03',
+            name: 'Garbage',
+            amount: 100.00,
+            category: 'Utilities',
+            expense: true,
+          },
+          {
+            date: '2017/06/04',
+            name: 'Internet',
+            amount: 75.00,
+            category: 'Utilities',
+            expense: true,
+          },
+        ],
+      };
 
-      ReactDOM.render(
-        <h1>Hello, world!</h1>,
-        document.getElementById('root')
-      );
+      function Transaction(props) {
+        return (
+          <div style={{
+            color: props.expense ? 'red' : 'green',
+            display: 'flex',
+          }}>
+            <div className="date" style={{flex: 1}}>{props.date}</div>
+            <div className="name" style={{flex: 3}}>{props.name}</div>
+            <div className="amount" style={{flex: 1}}>${props.amount}</div>
+            <div className="category" style={{flex: 3}}>{props.category}</div>
+          </div>
+        );
+      }
+
+      function Header(props) {
+        return (
+          <h1 style={{
+            border: '1px solid black',
+          }}>
+            June 2017
+          </h1>
+        );
+      }
+
+      function SideNav(props) {
+        return (
+          <div style={{
+            border: '1px solid black',
+            display: 'flex',
+            flexDirection: 'column',
+            margin: '4px',
+            width: '200px'
+          }}>
+            <div>Category</div>
+            <div>Month</div>
+            <div>Year</div>
+          </div>
+        );
+      }
+
+      function Transactions(props) {
+        const transactions = props.transactions.map((transaction) => (
+          <Transaction
+            date={transaction.date}
+            name={transaction.name}
+            amount={transaction.amount}
+            category={transaction.category}
+            expense={transaction.expense}
+          />
+        ));
+        return (
+          <div style={{
+            border: '1px solid black',
+            flex: 1,
+            margin: '4px',
+          }}>
+            {transactions}
+          </div>
+        );
+      }
+
+      function Root(props) {
+        return (
+          <div>
+            <Header />
+            <div style={{display: 'flex'}}>
+              <SideNav />
+              <Transactions transactions={data.transactions} />
+            </div>
+          </div>
+        );
+      }
+
+      ReactDOM.render(<Root />, document.getElementById('root'));
 
     </script>
   </body>
