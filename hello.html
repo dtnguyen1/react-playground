@@ -10,110 +10,227 @@
   <body>
     <div id="root"></div>
     <script type="text/babel">
-      const data = {
-        transactions: [
-          {
-            date: '2017/06/01',
-            name: 'Paycheck',
-            amount: 1000.00,
-            category: 'Income',
-            expense: false,
-          },
-          {
-            date: '2017/06/02',
-            name: 'Mortgage',
-            amount: 3000.00,
-            category: 'Housing',
-            expense: true,
-          },
-          {
-            date: '2017/06/03',
-            name: 'Garbage',
-            amount: 100.00,
-            category: 'Utilities',
-            expense: true,
-          },
-          {
-            date: '2017/06/04',
-            name: 'Internet',
-            amount: 75.00,
-            category: 'Utilities',
-            expense: true,
-          },
-        ],
-      };
-
-      function Transaction(props) {
+      function Display(props) {
         return (
           <div style={{
-            color: props.expense ? 'red' : 'green',
+            border: '1px solid black',
+            boxSizing: 'border-box',
+            fontSize: '50px',
+            height: '100px',
+            padding: '20px',
+            width: '400px',
+          }}>
+            {props.text}
+          </div>
+        );
+      }
+
+      function NumberPad(props) {
+        return (
+          <div style={{
             display: 'flex',
           }}>
-            <div className="date" style={{flex: 1}}>{props.date}</div>
-            <div className="name" style={{flex: 3}}>{props.name}</div>
-            <div className="amount" style={{flex: 1}}>${props.amount}</div>
-            <div className="category" style={{flex: 3}}>{props.category}</div>
-          </div>
-        );
-      }
-
-      function Header(props) {
-        return (
-          <h1 style={{
-            border: '1px solid black',
-          }}>
-            June 2017
-          </h1>
-        );
-      }
-
-      function SideNav(props) {
-        return (
-          <div style={{
-            border: '1px solid black',
-            display: 'flex',
-            flexDirection: 'column',
-            margin: '4px',
-            width: '200px'
-          }}>
-            <div>Category</div>
-            <div>Month</div>
-            <div>Year</div>
-          </div>
-        );
-      }
-
-      function Transactions(props) {
-        const transactions = props.transactions.map((transaction) => (
-          <Transaction
-            date={transaction.date}
-            name={transaction.name}
-            amount={transaction.amount}
-            category={transaction.category}
-            expense={transaction.expense}
-          />
-        ));
-        return (
-          <div style={{
-            border: '1px solid black',
-            flex: 1,
-            margin: '4px',
-          }}>
-            {transactions}
-          </div>
-        );
-      }
-
-      function Root(props) {
-        return (
-          <div>
-            <Header />
-            <div style={{display: 'flex'}}>
-              <SideNav />
-              <Transactions transactions={data.transactions} />
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              height: '400px',
+            }}>
+              <div style={{
+                display: 'flex',
+                flex: 1,
+                width: '300px',
+              }}>
+                <Button value="1" onClick={(value) => props.onClick(value)} />
+                <Button value="2" onClick={(value) => props.onClick(value)} />
+                <Button value="3" onClick={(value) => props.onClick(value)} />
+              </div>
+              <div style={{
+                display: 'flex',
+                flex: 1,
+                width: '300px',
+              }}>
+                <Button value="4" onClick={(value) => props.onClick(value)} />
+                <Button value="5" onClick={(value) => props.onClick(value)} />
+                <Button value="6" onClick={(value) => props.onClick(value)} />
+              </div>
+              <div style={{
+                display: 'flex',
+                flex: 1,
+                width: '300px',
+              }}>
+                <Button value="7" onClick={(value) => props.onClick(value)} />
+                <Button value="8" onClick={(value) => props.onClick(value)} />
+                <Button value="9" onClick={(value) => props.onClick(value)} />
+              </div>
+              <div style={{
+                display: 'flex',
+                flex: 1,
+                width: '300px',
+              }}>
+                <Button value="C" onClick={(value) => props.onClick(value)} />
+                <Button value="0" onClick={(value) => props.onClick(value)} />
+                <Button value="=" onClick={(value) => props.onClick(value)} />
+              </div>
+            </div>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              height: '400px',
+              width: '100px',
+            }}>
+              <Button value="+" onClick={(value) => props.onClick(value)} />
+              <Button value="-" onClick={(value) => props.onClick(value)} />
+              <Button value="*" onClick={(value) => props.onClick(value)} />
+              <Button value="/" onClick={(value) => props.onClick(value)} />
             </div>
           </div>
         );
+      }
+
+      function Button(props) {
+        return (
+          <button
+              style={{
+                alignItems: 'center',
+                // border: '1px solid black',
+                display: 'flex',
+                flex: 1,
+                fontSize: '50px',
+                justifyContent: 'center',
+              }}
+              onClick={() => props.onClick(props.value)}>
+            {props.value}
+          </button>
+        );
+      }
+
+      class Root extends React.Component {
+        constructor() {
+          super();
+
+          this.state = {
+            displayText: '',
+          };
+        }
+
+        render() {
+          return (
+            <div>
+              <Display text={this.state.displayText} />
+              <div style={{display: 'flex'}}>
+                <NumberPad onClick={(value) => this.handleClick(value)} />
+              </div>
+            </div>
+          );
+        }
+
+        handleClick(value) {
+          var displayText = this.state.displayText;
+          if (value == 'C') {
+            displayText = '';
+          } else if (value == '=') {
+            if (displayText.length > 0) {
+              var lastChar = displayText[displayText.length - 1];
+              if (this.isNumber(lastChar)) {
+                displayText = '' + this.calculateValue(displayText);
+              }
+            }
+          } else if (!this.isNumber(value)) {
+            if (displayText.length > 0) {
+              var lastChar = displayText[displayText.length - 1];
+              if (this.isNumber(lastChar)) {
+                displayText += ' ' + value;
+              } else {
+                displayText =
+                    displayText.substring(0, displayText.length - 1) + value;
+              }
+            }
+          } else {
+            if (displayText.length > 0) {
+              var lastChar = displayText[displayText.length - 1];
+              if (this.isNumber(lastChar)) {
+                displayText += value;
+              } else {
+                displayText += ' ' + value;
+              }
+            } else {
+              displayText = value;
+            }
+          }
+
+          this.setState({
+            displayText: displayText,
+          });
+        }
+
+        isNumber(value) {
+          return value == '0' ||
+              value == '1' ||
+              value == '2' ||
+              value == '3' ||
+              value == '4' ||
+              value == '5' ||
+              value == '6' ||
+              value == '7' ||
+              value == '8' ||
+              value == '9';
+        }
+
+        calculateValue(displayText) {
+          if (displayText == '') return displayText;
+
+          var result = this.reduceExpression(displayText.split(' '));
+          return parseInt(result[0]);
+        }
+
+        reduceExpression(parts) {
+          console.log(parts);
+
+          var index;
+          if (this.firstSymbolIndex(parts, ['*', '/']) > -1) {
+            var index = this.firstSymbolIndex(parts, ['*', '/']);
+            var first = parseFloat(parts[index - 1]);
+            var second = parseFloat(parts[index + 1]);
+            var result;
+            if (parts[index] == '*') {
+              result = first * second;
+            } else {
+              result = first / second;
+            }
+            return this.reduceExpression(
+              parts
+                .slice(0, index - 1)
+                .concat([result])
+                .concat(parts.slice(index + 2)));
+          } else if (this.firstSymbolIndex(parts, ['+', '-']) > -1) {
+            var index = this.firstSymbolIndex(parts, ['+', '-']);
+            var first = parseFloat(parts[index - 1]);
+            var second = parseFloat(parts[index + 1]);
+            var result;
+            if (parts[index] == '+') {
+              result = first + second;
+            } else {
+              result = first - second;
+            }
+            return this.reduceExpression(
+              parts
+                .slice(0, index - 1)
+                .concat([result])
+                .concat(parts.slice(index + 2)));
+          } else {
+            return parts;
+          }
+        }
+
+        firstSymbolIndex(parts, symbols) {
+          for (var i = 0, part; part = parts[i]; i++) {
+            if (symbols.indexOf(part) > -1) {
+              return i;
+            }
+          }
+
+          return -1;
+        }
       }
 
       ReactDOM.render(<Root />, document.getElementById('root'));
